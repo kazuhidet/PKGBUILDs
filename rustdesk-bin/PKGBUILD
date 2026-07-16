@@ -1,0 +1,56 @@
+# Maintainer: czyt <czytcn@gmail.com>
+pkgname=rustdesk-bin
+pkgver=1.4.9
+pkgrel=1
+pkgdesc="Yet another remote desktop software, written in Rust. Works out of the box, no configuration required. Great alternative to TeamViewer and AnyDesk!"
+arch=('x86_64' 'aarch64')
+url="https://github.com/rustdesk"
+license=('AGPL-3.0')
+optdepends=(
+  'bash-completion: bash completion support'
+)
+provides=('rustdesk')
+conflicts=('rustdesk')
+replaces=('rustdesk')
+source_x86_64=("https://github.com/rustdesk/rustdesk/releases/download/1.4.9/rustdesk-1.4.9-x86_64.deb")
+source_aarch64=("https://github.com/rustdesk/rustdesk/releases/download/1.4.9/rustdesk-1.4.9-aarch64.deb")
+source=("${pkgname}.install")
+sha256sums_x86_64=('7244ba47c40e804172044bfbe659467c54ce46554c98e78c8c0406f1d612fda3')
+sha256sums_aarch64=('ce62c996f14d33f3bbe3a330e953644a44bace7f05885a7953f7395d69fb49c0')
+sha256sums=('97e5aad07b84e35d162e9626f0af8e7147c6a3b85d43ad8e867630546a80df9f')
+install="${pkgname}.install"
+
+package() {
+  cd "${srcdir}"
+  bsdtar -C "${pkgdir}" -xf data.tar.xz
+}
+
+post_install() {
+  local new_version=$1
+  ln -f -s /usr/share/rustdesk/rustdesk /usr/bin/rustdesk
+  INITSYS=$(ls -al /proc/1/exe | awk -F' ' '{print $NF}' | awk -F'/' '{print $NF}')
+  if [ "systemd" == "$INITSYS" ]; then
+    if [ -e /etc/systemd/system/rustdesk.service ]; then
+      rm /etc/systemd/system/rustdesk.service /usr/lib/systemd/system/rustdesk.service /usr/lib/systemd/user/rustdesk.service >/dev/null  2>&1
+    fi
+    mkdir -p /usr/lib/systemd/system/
+    cp /usr/share/rustdesk/files/systemd/rustdesk.service /usr/lib/systemd/system/rustdesk.service
+    if [ -e /usr/bin/pkill ]; then
+      sed -i "s|pkill|/usr/bin/pkill|g" /usr/lib/systemd/system/rustdesk.service
+    fi
+    systemctl daemon-reload
+    systemctl enable rustdesk
+    systemctl start rustdesk
+  fi
+}
+
+pre_remove() {
+  INITSYS=$(ls -al /proc/1/exe | awk -F' ' '{print $NF}' | awk -F'/' '{print $NF}')
+  if [ "systemd" == "$INITSYS" ]; then
+    if [ -e /etc/systemd/system/rustdesk.service ]; then
+      systemctl stop rustdesk
+      systemctl disable rustdesk
+      rm /etc/systemd/system/rustdesk.service /usr/lib/systemd/system/rustdesk.service /usr/lib/systemd/user/rustdesk.service >/dev/null  2>&1
+    fi
+  fi
+}

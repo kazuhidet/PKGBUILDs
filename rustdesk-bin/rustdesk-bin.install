@@ -1,0 +1,29 @@
+#!/bin/sh
+post_install() {
+  ln -f -s /usr/share/rustdesk/rustdesk /usr/bin/rustdesk
+  INITSYS=$(ls -al /proc/1/exe | awk -F' ' '{print $NF}' | awk -F'/' '{print $NF}')
+  if [ "systemd" == "$INITSYS" ]; then
+    if [ -e /etc/systemd/system/rustdesk.service ]; then
+      rm /etc/systemd/system/rustdesk.service /usr/lib/systemd/system/rustdesk.service /usr/lib/systemd/user/rustdesk.service >/dev/null  2>&1
+    fi
+    mkdir -p /usr/lib/systemd/system/
+    cp /usr/share/rustdesk/files/systemd/rustdesk.service /usr/lib/systemd/system/rustdesk.service
+    if [ -e /usr/bin/pkill ]; then
+      sed -i "s|pkill|/usr/bin/pkill|g" /usr/lib/systemd/system/rustdesk.service
+    fi
+    systemctl daemon-reload
+    systemctl enable rustdesk
+    systemctl start rustdesk
+  fi
+}
+
+pre_remove() {
+  INITSYS=$(ls -al /proc/1/exe | awk -F' ' '{print $NF}' | awk -F'/' '{print $NF}')
+  if [ "systemd" == "$INITSYS" ]; then
+    if [ -e /etc/systemd/system/rustdesk.service ]; then
+      systemctl stop rustdesk
+      systemctl disable rustdesk
+      rm /etc/systemd/system/rustdesk.service /usr/lib/systemd/system/rustdesk.service /usr/lib/systemd/user/rustdesk.service >/dev/null  2>&1
+    fi
+  fi
+}

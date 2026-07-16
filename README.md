@@ -101,6 +101,25 @@ The main changes are:
 * Avoid relying on an `x86_64` Bazel binary during the build
 * Adjust the build process for Arch Linux ARM environments
 
+### rustdesk-bin
+
+This directory contains a `PKGBUILD` for creating a Pacman package of [RustDesk](https://github.com/rustdesk/rustdesk).
+
+RustDesk is an open-source remote desktop application written in Rust. It is commonly used as an alternative to remote desktop tools such as TeamViewer and AnyDesk.
+
+Please note that this package does not build RustDesk from source. Instead, it repackages the official upstream `.deb` binary release into a Pacman package format for Arch Linux / Arch Linux ARM.
+
+The `PKGBUILD` supports both `x86_64` and `aarch64` architectures:
+
+* `x86_64` uses the official RustDesk `x86_64` Debian package
+* `aarch64` uses the official RustDesk `aarch64` Debian package
+
+The generated Pacman package is named `rustdesk-bin`, but it provides the `rustdesk` package name. It also conflicts with and replaces an existing `rustdesk` package, so it can be used as a drop-in replacement.
+
+The package installs the RustDesk application files under `/usr/share/rustdesk` and provides the `rustdesk` command for launching the application.
+
+This packaging method is useful for Arch Linux ARM environments because it allows RustDesk to be installed on `aarch64` systems using the official upstream binary release.
+
 ## Notes
 
 These packaging files are intended primarily for Arch Linux ARM and `aarch64` systems.
