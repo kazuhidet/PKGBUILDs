@@ -5,8 +5,8 @@
 
 # Maintainer: Your Name <youremail@domain.com>
 pkgname=rencal
-pkgver=0.6.2
-caldir_ver=0.11.1
+pkgver=0.7.2
+caldir_ver=0.14.5
 pkgrel=1
 epoch=
 pkgdesc="Modern, open-source calendar app. Built for Omarchy."
@@ -26,46 +26,45 @@ options=()
 install=
 changelog=
 source=("${pkgname}-${pkgver}.zip::https://github.com/t4t5/rencal/archive/refs/tags/v${pkgver}.zip"
-        "caldir-${caldir_ver}.zip::https://github.com/t4t5/caldir/archive/refs/tags/v${caldir_ver}.zip"
-        "renCal.desktop")
-sha256sums=('7556cb11d94cfe338495e52238b9a31e25f47dfbc1ca88a5d3c692d937d0bad4'
-            '7e95b04da003182eca55f01b73fae58f2509fe11eb47d6005e9c81b408aa6d32'
-            'b9a6725bb9d27a2d38db4e6e2d8c8e37730eac3a7c2c6e0d00836a1eb333f05c')
+    "caldir-${caldir_ver}.zip::https://github.com/t4t5/caldir/archive/refs/tags/v${caldir_ver}.zip"
+    "renCal.desktop")
+sha256sums=('df53f3605270fb6a129b0b667eae4e8a79a67e2ce224fc5b69cff614be0ff86c'
+    'a77149811e834dfac7c4468394d72eb95d702c6dd3704b31f090457e2b20b1cf'
+    'b9a6725bb9d27a2d38db4e6e2d8c8e37730eac3a7c2c6e0d00836a1eb333f05c')
 
 prepare() {
-  cd "${srcdir}/caldir-${caldir_ver}"
-  cargo build --release
-  mkdir -p "${srcdir}/${pkgname}-${pkgver}/src-tauri/providers/"
-  cp -a target/release/{caldir-provider-google,caldir-provider-icloud,caldir-provider-outlook,caldir-provider-caldav,caldir-provider-webcal} ${srcdir}/${pkgname}-${pkgver}/src-tauri/providers/
+    cd "${srcdir}/caldir-${caldir_ver}"
+    cargo build --release
+    mkdir -p "${srcdir}/${pkgname}-${pkgver}/src-tauri/providers/"
+    cp -a target/release/{caldir-provider-google,caldir-provider-icloud,caldir-provider-outlook,caldir-provider-caldav,caldir-provider-webcal} ${srcdir}/${pkgname}-${pkgver}/src-tauri/providers/
 }
 
 build() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  unset CFLAGS CXXFLAGS LDFLAGS
-  CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=gcc \
-  pnpm tauri build --no-bundle
-  cd "${srcdir}/${pkgname}-${pkgver}/src-tauri/reminder-core"
-  cargo build --release
-  cd "${srcdir}/${pkgname}-${pkgver}/src-tauri/notifierd"
-  cargo build --release
+    cd "${srcdir}/${pkgname}-${pkgver}"
+    unset CFLAGS CXXFLAGS LDFLAGS
+    CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=gcc \
+        pnpm tauri build --no-bundle
+    cd "${srcdir}/${pkgname}-${pkgver}/src-tauri/reminder-core"
+    cargo build --release
+    cd "${srcdir}/${pkgname}-${pkgver}/src-tauri/notifierd"
+    cargo build --release
 }
 
 package() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
-  mkdir -p "${pkgdir}/usr/bin"
-  install -m 755 src-tauri/target/release/rencal "${pkgdir}/usr/bin/rencal"
-  install -m 755 src-tauri/target/release/rencal-notifierd ${pkgdir}/usr/bin/rencal-notifierd
-  mkdir -p "${pkgdir}/usr/lib/renCal/providers"
-  install -m 755 src-tauri/target/release/providers/{caldir-provider-google,caldir-provider-icloud,caldir-provider-outlook,caldir-provider-caldav,caldir-provider-webcal} "${pkgdir}/usr/lib/renCal/providers/"
-  mkdir -p "${pkgdir}/usr/lib/systemd/user"
-  install -m 755 src-tauri/notifierd/rencal-notifierd.service ${pkgdir}/usr/lib/systemd/user/rencal-notifierd.service
-  mkdir -p "${pkgdir}/usr/share/applications"
-  install -m 644 ../../renCal.desktop "${pkgdir}/usr/share/applications/renCal.desktop"
-  mkdir -p "${pkgdir}/usr/share/icons/hicolor/32x32/apps"
-  install -m 644 src-tauri/icons/32x32.png "${pkgdir}/usr/share/icons/hicolor/32x32/apps/rencal.png"
-  mkdir -p "${pkgdir}/usr/share/icons/hicolor/128x128/apps"
-  install -m 644 src-tauri/icons/128x128.png "${pkgdir}/usr/share/icons/hicolor/128x128/apps/rencal.png"
-  mkdir -p "${pkgdir}/usr/share/icons/hicolor/256x256@2/apps"
-  install -m 644 src-tauri/icons/128x128@2x.png "${pkgdir}/usr/share/icons/hicolor/256x256@2/apps/rencal.png"
+    cd "${srcdir}/${pkgname}-${pkgver}"
+    mkdir -p "${pkgdir}/usr/bin"
+    install -m 755 src-tauri/target/release/rencal "${pkgdir}/usr/bin/rencal"
+    install -m 755 src-tauri/target/release/rencal-notifierd ${pkgdir}/usr/bin/rencal-notifierd
+    mkdir -p "${pkgdir}/usr/lib/renCal/providers"
+    install -m 755 src-tauri/providers/{caldir-provider-google,caldir-provider-icloud,caldir-provider-outlook,caldir-provider-caldav,caldir-provider-webcal} "${pkgdir}/usr/lib/renCal/providers/"
+    mkdir -p "${pkgdir}/usr/lib/systemd/user"
+    install -m 755 src-tauri/notifierd/rencal-notifierd.service ${pkgdir}/usr/lib/systemd/user/rencal-notifierd.service
+    mkdir -p "${pkgdir}/usr/share/applications"
+    install -m 644 ../../renCal.desktop "${pkgdir}/usr/share/applications/renCal.desktop"
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/32x32/apps"
+    install -m 644 src-tauri/icons/32x32.png "${pkgdir}/usr/share/icons/hicolor/32x32/apps/rencal.png"
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/128x128/apps"
+    install -m 644 src-tauri/icons/128x128.png "${pkgdir}/usr/share/icons/hicolor/128x128/apps/rencal.png"
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/256x256@2/apps"
+    install -m 644 src-tauri/icons/128x128@2x.png "${pkgdir}/usr/share/icons/hicolor/256x256@2/apps/rencal.png"
 }
-
