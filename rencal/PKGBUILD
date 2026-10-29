@@ -5,8 +5,8 @@
 
 # Maintainer: Your Name <youremail@domain.com>
 pkgname=rencal
-pkgver=0.7.2
-caldir_ver=0.14.5
+pkgver=0.9.0
+caldir_ver=0.14.9
 pkgrel=1
 epoch=
 pkgdesc="Modern, open-source calendar app. Built for Omarchy."
@@ -28,8 +28,8 @@ changelog=
 source=("${pkgname}-${pkgver}.zip::https://github.com/t4t5/rencal/archive/refs/tags/v${pkgver}.zip"
     "caldir-${caldir_ver}.zip::https://github.com/t4t5/caldir/archive/refs/tags/v${caldir_ver}.zip"
     "renCal.desktop")
-sha256sums=('df53f3605270fb6a129b0b667eae4e8a79a67e2ce224fc5b69cff614be0ff86c'
-    'a77149811e834dfac7c4468394d72eb95d702c6dd3704b31f090457e2b20b1cf'
+sha256sums=('b2ceed1be4a1339b1ffe2788ce64193784dc50542bf341587d917207a955efc6'
+    '87cdcfebb946cc9f0058a2b2d0c64d1316b60e850379066d4eaf4faaff3f0821'
     'b9a6725bb9d27a2d38db4e6e2d8c8e37730eac3a7c2c6e0d00836a1eb333f05c')
 
 prepare() {
