@@ -1,6 +1,6 @@
 # Maintainer: czyt <czytcn@gmail.com>
 pkgname=rustdesk-bin
-pkgver=1.5.1
+pkgver=1.5.3
 pkgrel=1
 pkgdesc="Yet another remote desktop software, written in Rust. Works out of the box, no configuration required. Great alternative to TeamViewer and AnyDesk!"
 arch=('x86_64' 'aarch64')
@@ -15,8 +15,8 @@ replaces=('rustdesk')
 source_x86_64=("https://github.com/rustdesk/rustdesk/releases/download/${pkgver}/rustdesk-${pkgver}-x86_64.deb")
 source_aarch64=("https://github.com/rustdesk/rustdesk/releases/download/${pkgver}/rustdesk-${pkgver}-aarch64.deb")
 source=("${pkgname}.install")
-sha256sums_x86_64=('b5d682ad90cb7571ecbdbf26eef58d3c4514e726a74ef6d08ce3f0b114ef0bd9')
-sha256sums_aarch64=('d1471ed916dc21e3ae3965f936c51944e1f2635a6d521fcc4663486696018465')
+sha256sums_x86_64=('81096d2f65fd43352540c351bca15bb0712a2a6f9efa4c95e9fff25cb97b3b81')
+sha256sums_aarch64=('fa85e8d3ccd45e2e303c2d1359af5dc51aa93d880e39ba47c9b04bfabd82ae19')
 sha256sums=('97e5aad07b84e35d162e9626f0af8e7147c6a3b85d43ad8e867630546a80df9f')
 install="${pkgname}.install"
 
